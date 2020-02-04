@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Clip</string>
+    <string name="title">Shid ClipBoard Manager</string>
+    <string name="switch_activate_service">Activate Service</string>
+    <string name="general_channel">General Channel</string>
+</resources>
