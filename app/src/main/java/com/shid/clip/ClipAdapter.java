@@ -1,10 +1,13 @@
 package com.shid.clip;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -108,6 +111,13 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
         public void onClick(View view) {
             int elementId = mClipEntries.get(getAdapterPosition()).getClipId();
             mItemClickListener.onItemClickListener(elementId);
+            TextView name = view.findViewById(R.id.clip_entry);
+            String entry = name.getText().toString();
+
+            ClipboardManager clipboardManager = (ClipboardManager)mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("Copied text",entry);
+            clipboardManager.setPrimaryClip(clipData);
+            Toast.makeText(view.getContext(),"Le texte a été copié",Toast.LENGTH_SHORT).show();
         }
     }
 

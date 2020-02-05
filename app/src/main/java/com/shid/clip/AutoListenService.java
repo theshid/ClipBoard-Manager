@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Icon;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
+import com.shid.clip.Utils.AppExecutor;
 import com.shid.clip.Utils.Constant;
 
 import java.util.Date;
@@ -108,18 +110,57 @@ public class AutoListenService extends Service {
         listener = new ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
             public void onPrimaryClipChanged() {
+                startPrimaryClipChangedListenerDelayThread();
                 performClipboardCheck();
             }
         };
     }
 
+    void startPrimaryClipChangedListenerDelayThread() {
+        mClipboard.removePrimaryClipChangedListener(listener);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mClipboard.addPrimaryClipChangedListener(listener);
+            }
+        }, 500);
+    }
+
+
+    @Override
+    public void onDestroy() {
+
+        if (notificationManager != null) {
+            notificationManager.cancel(Constant.NOTI_IDENTIFIER);
+        }
+
+
+        if (mClipboard != null && listener != null) {
+            this.mClipboard.removePrimaryClipChangedListener(listener);
+            Toast.makeText(context, " AutoListen Disabled, reset to use again", Toast.LENGTH_SHORT).show();
+
+        }
+        super.onDestroy();
+    }
+
     private void performClipboardCheck() {
         if (mClipboard.hasPrimaryClip()) {
-            String copiedClip = mClipboard.getPrimaryClip().getItemAt(0).toString();
+            String copiedClip = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();
+
             Date date = new Date();
-            ClipEntry clipEntry = new ClipEntry(copiedClip,date);
-            mDb.clipDao().insertClip(clipEntry);
-            Toast.makeText(context,"Clip added",Toast.LENGTH_LONG).show();
+            final ClipEntry clipEntry = new ClipEntry(copiedClip, date);
+            AppExecutor.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    mDb.clipDao().insertClip(clipEntry);
+
+                }
+            });
+
+
+            Toast.makeText(context, "Clip added", Toast.LENGTH_LONG).show();
+
         }
     }
 
