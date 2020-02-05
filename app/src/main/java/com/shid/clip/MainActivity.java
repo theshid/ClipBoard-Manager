@@ -10,17 +10,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
 import com.shid.clip.Utils.AppExecutor;
+import com.shid.clip.Utils.SharedPref;
+import com.varunest.sparkbutton.SparkButton;
+import com.varunest.sparkbutton.SparkEventListener;
 
 import java.util.List;
 
@@ -34,16 +39,50 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
     private RecyclerView mRecyclerView;
     private ClipAdapter mAdapter;
     private Switch mSwitch;
-    private boolean isServiceOn= false;
+    private boolean isServiceOn = false;
+    private SharedPref sharedPref;
+    private SparkButton sparkButton;
+
 
     private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        checkPrefNight();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d(TAG, "value of boolean " + isServiceOn);
         mSwitch = findViewById(R.id.switch1);
+        sparkButton = findViewById(R.id.spark_button);
+
+
+
+        sparkButton.setEventListener(new SparkEventListener() {
+            @Override
+            public void onEvent(ImageView button, boolean buttonState) {
+                if (buttonState){
+                    sharedPref.setNightMode(true);
+                    restartApp();
+                } else{
+                    sharedPref.setNightMode(false);
+                    restartApp();
+                }
+            }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+
+            }
+
+            @Override
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
+
+            }
+        });
+
+
+        checkPref();
 
         // Set the RecyclerView to its corresponding view
         mRecyclerView = findViewById(R.id.recyclerView);
@@ -82,22 +121,60 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
                         mDb.clipDao().deleteClip(clips.get(position));
                     }
                 });
-                Toast.makeText(getApplicationContext(),"Entry deleted",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Entry deleted", Toast.LENGTH_LONG).show();
             }
         }).attachToRecyclerView(mRecyclerView);
 
         mDb = AppDatabase.getInstance(getApplicationContext());
         setupViewModel();
         handleAutoListen();
+
     }
+
+    private void restartApp() {
+        this.recreate();
+    }
+
+    private void checkPref() {
+     sharedPref = new SharedPref(this);
+     if (sharedPref.loadSwitchState()){
+         mSwitch.setChecked(true);
+         startAutoService();
+     } else{
+         mSwitch.setChecked(false);
+         stopAutoService();
+     }
+
+     if (sharedPref.loadNightMode()){
+         setTheme(R.style.DarkTheme);
+         sparkButton.setChecked(true);
+     } else{
+         setTheme(R.style.DayTheme);
+         sparkButton.setChecked(false);
+     }
+    }
+
+    private void checkPrefNight(){
+        sharedPref = new SharedPref(this);
+        if (sharedPref.loadNightMode()){
+            setTheme(R.style.DarkTheme);
+
+        } else{
+            setTheme(R.style.DayTheme);
+
+        }
+    }
+
 
     private void handleAutoListen() {
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    sharedPref.setSwitch(true);
                     startAutoService();
                 } else {
+                    sharedPref.setSwitch(false);
                     stopAutoService();
                 }
             }
@@ -134,17 +211,18 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
 
     @Override
     public void onItemClickListener(int itemId) {
-    if (isServiceOn = true){
-        stopAutoService();
+        Log.d(TAG, "value of boolean item " + isServiceOn);
+        if (isServiceOn) {
+            stopAutoService();
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-               startAutoService();
-            }
-        }, 500);
-    }
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startAutoService();
+                }
+            }, 500);
+        }
 
     }
 }
