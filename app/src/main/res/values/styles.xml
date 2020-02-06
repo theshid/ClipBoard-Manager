@@ -13,15 +13,17 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#2196F3</item>
         <item name="colorPrimaryDark">#1976D2</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimaryDark</item>
         <item name="backgroundColor">#ffffff</item>
         <item name="cardGround">#ffffff</item>
+        <item name="android:divider">#000000</item>
         <item name="textColor">#000000</item>
+        <item name="colorSwitchThumbNormal">#000000</item>
         <item name="tintColor">#000000</item>
         <item name="buttonColor">#2196F3</item>
         <item name="android:windowAnimationStyle">@style/WindowsAnimationTransition</item>
         <item name="colorControlNormal">@color/colorAccent</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
         <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
@@ -29,8 +31,10 @@
     <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#212121</item>
+        <item name="android:divider">#ffffff</item>
         <item name="colorPrimaryDark">#000000</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorSwitchThumbNormal">#ffffff</item>
         <item name="backgroundColor">#000000</item>
         <item name="cardGround">#424242</item>
         <item name="textColor">#ffffff</item>
@@ -38,8 +42,10 @@
         <item name="buttonColor">#2196F3</item>
         <item name="android:windowAnimationStyle">@style/WindowsAnimationTransition</item>
         <item name="colorControlNormal">@color/colorAccent</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlActivated">#ff0000</item>
         <item name="colorControlHighlight">@color/colorAccent</item>
+        <!-- inactive track color (30% transparency) -->
+        <item name="android:colorForeground">#ffffff</item>
 
     </style>
 

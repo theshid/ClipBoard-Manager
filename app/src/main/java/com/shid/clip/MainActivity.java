@@ -2,6 +2,8 @@ package com.shid.clip;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -10,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +31,7 @@ import com.varunest.sparkbutton.SparkEventListener;
 
 import java.util.List;
 
+import static androidx.recyclerview.widget.DividerItemDecoration.HORIZONTAL;
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 
 public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemClickListener {
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private ClipAdapter mAdapter;
-    private Switch mSwitch;
+    private SwitchCompat mSwitch;
     private boolean isServiceOn = false;
     private SharedPref sharedPref;
     private SparkButton sparkButton;
@@ -95,8 +98,10 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
         mAdapter = new ClipAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
 
+
         DividerItemDecoration decoration = new DividerItemDecoration(getApplicationContext(), VERTICAL);
         mRecyclerView.addItemDecoration(decoration);
+
 
          /*
          Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
@@ -204,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
             @Override
             public void onChanged(@Nullable List<ClipEntry> taskEntries) {
                 Log.d(TAG, "Updating list of tasks from LiveData in ViewModel");
-                mAdapter.setTasks(taskEntries);
+                mAdapter.setClips(taskEntries);
             }
         });
     }

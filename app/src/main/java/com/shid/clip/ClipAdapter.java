@@ -74,10 +74,10 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
     }
 
     /**
-     * When data changes, this method updates the list of taskEntries
+     * When data changes, this method updates the list of clipEntries
      * and notifies the adapter to use the new values on it
      */
-    public void setTasks(List<ClipEntry> clipEntries) {
+    public void setClips(List<ClipEntry> clipEntries) {
         mClipEntries = clipEntries;
         notifyDataSetChanged();
     }
