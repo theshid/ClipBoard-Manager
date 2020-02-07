@@ -20,7 +20,8 @@
             android:exported="true" />
 
         <activity android:name=".MainActivity"
-            android:theme="@style/DayTheme">
+            android:theme="@style/DayTheme"
+            android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
