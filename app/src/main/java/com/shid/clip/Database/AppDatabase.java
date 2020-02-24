@@ -7,8 +7,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = ClipEntry.class, version = 1, exportSchema = false)
+@Database(entities ={ClipEntry.class} , version = 2, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -23,6 +25,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 Log.d(LOG_TAG, "Creating new database instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         AppDatabase.class,AppDatabase.DATABASE_NAME)
+                        .fallbackToDestructiveMigration()
                         .build();
             }
         }
@@ -30,5 +33,15 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
 
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE clip "
+                    + " ADD COLUMN favorite INTEGER");
+        }
+    };
+
+
     public abstract ClipDAO clipDao();
+
 }

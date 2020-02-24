@@ -13,18 +13,29 @@ public class ClipEntry {
     private int clipId;
     private String entry;
     private Date date;
+    private int favorite;
 
     @Ignore
-    public ClipEntry(String entry, Date date) {
+    public ClipEntry(String entry, Date date, int favorite) {
         this.entry = entry;
         this.date = date;
+        this.favorite = favorite;
     }
 
 
-    public ClipEntry(int clipId, String entry, Date date) {
+    public ClipEntry(int clipId, String entry, Date date, int favorite) {
         this.clipId = clipId;
         this.entry = entry;
         this.date = date;
+        this.favorite = favorite;
+    }
+
+    public int getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(int favorite) {
+        this.favorite = favorite;
     }
 
     public int getClipId() {

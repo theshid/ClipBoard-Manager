@@ -38,6 +38,7 @@ public class AutoListenService extends Service {
     private ClipboardManager.OnPrimaryClipChangedListener listener;
     // Member variable for the Database
     private AppDatabase mDb;
+    public static boolean isServiceRunning = false;
 
 
     @Override
@@ -57,7 +58,7 @@ public class AutoListenService extends Service {
         PendingIntent stopAutoPIntent = PendingIntent.getBroadcast(context, Constant.REQUEST_CODE, stopAutoIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_service);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Icon icon = Icon.createWithResource(context, R.drawable.ic_stop_black);
             Notification.Action.Builder builder = new Notification.Action.Builder(icon, "STOP", stopAutoPIntent);
@@ -101,6 +102,7 @@ public class AutoListenService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        isServiceRunning = true;
         context = getApplicationContext();
         mClipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -130,7 +132,7 @@ public class AutoListenService extends Service {
 
     @Override
     public void onDestroy() {
-
+        isServiceRunning = false;
         if (notificationManager != null) {
             notificationManager.cancel(Constant.NOTI_IDENTIFIER);
         }
@@ -149,7 +151,7 @@ public class AutoListenService extends Service {
             String copiedClip = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();
 
             Date date = new Date();
-            final ClipEntry clipEntry = new ClipEntry(copiedClip, date);
+            final ClipEntry clipEntry = new ClipEntry(copiedClip, date, 0);
             AppExecutor.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {

@@ -1,17 +1,24 @@
-package com.shid.clip;
+package com.shid.clip.Adapters;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
+import com.shid.clip.R;
+import com.shid.clip.Utils.AppExecutor;
+import com.varunest.sparkbutton.SparkButton;
+import com.varunest.sparkbutton.SparkEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -21,6 +28,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
 
     // Constant for date format
     private static final String DATE_FORMAT = "dd/MM/yyy";
+    private AppDatabase mDb;
 
     // Member variable to handle item clicks
     final private ItemClickListener mItemClickListener;
@@ -47,14 +55,62 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
 
     @Override
     public void onBindViewHolder(ClipViewHolder holder, int position) {
+        mDb = AppDatabase.getInstance(mContext);
         // Determine the values of the wanted data
-        ClipEntry clipEntry = mClipEntries.get(position);
+        final ClipEntry clipEntry = mClipEntries.get(position);
         String clip = clipEntry.getEntry();
         String date = dateFormat.format(clipEntry.getDate());
+        final int clip_id = clipEntry.getClipId();
+        int favorite_status = clipEntry.getFavorite();
+        Log.d("Adapter","value of fav" + favorite_status);
 
         //Set values
         holder.clipView.setText(clip);
         holder.dateClip.setText(date);
+
+        if (favorite_status ==0){
+            holder.favorite.setChecked(false);
+            Log.d("Adapter","value of button "+holder.favorite.isChecked());
+        } else{
+            holder.favorite.setChecked(true);
+            Log.d("Adapter","value of button "+holder.favorite.isChecked());
+        }
+        holder.favorite.setEventListener(new SparkEventListener() {
+            @Override
+            public void onEvent(ImageView button, boolean buttonState) {
+                if (buttonState){
+                    clipEntry.setFavorite(1);
+                    AppExecutor.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDb.clipDao().update(1,clip_id);
+
+                        }
+                    });
+                    Log.d("Adapter","new value active"+clipEntry.getFavorite());
+                } else{
+                    clipEntry.setFavorite(0);
+                    AppExecutor.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDb.clipDao().update(0,clip_id);
+
+                        }
+                    });
+                    Log.d("Adapter","new value inactive"+clipEntry.getFavorite());
+                }
+            }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+
+            }
+
+            @Override
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
+
+            }
+        });
 
     }
 
@@ -92,6 +148,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
         // Class variables for the task description and priority TextViews
         TextView clipView;
         TextView dateClip;
+        SparkButton favorite;
 
 
         /**
@@ -104,6 +161,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
 
             clipView = itemView.findViewById(R.id.clip_entry);
             dateClip = itemView.findViewById(R.id.clipDate);
+            favorite = itemView.findViewById(R.id.favorite_button);
             itemView.setOnClickListener(this);
         }
 
@@ -114,10 +172,10 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
             TextView name = view.findViewById(R.id.clip_entry);
             String entry = name.getText().toString();
 
-            ClipboardManager clipboardManager = (ClipboardManager)mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clipData = ClipData.newPlainText("Copied text",entry);
+            ClipboardManager clipboardManager = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("Copied text", entry);
             clipboardManager.setPrimaryClip(clipData);
-            Toast.makeText(view.getContext(),"Le texte a été copié",Toast.LENGTH_SHORT).show();
+            Toast.makeText(view.getContext(), "Le texte a été copié", Toast.LENGTH_SHORT).show();
         }
     }
 

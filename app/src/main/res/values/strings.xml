@@ -3,4 +3,5 @@
     <string name="title">Shid ClipBoard Manager</string>
     <string name="switch_activate_service">Activate Service</string>
     <string name="general_channel">General Channel</string>
+    <string name="data_texview">NO DATA AVAILABLE</string>
 </resources>

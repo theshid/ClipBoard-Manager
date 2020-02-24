@@ -3,51 +3,60 @@ package com.shid.clip;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
+import com.shid.clip.Adapters.ClipAdapter;
+import com.shid.clip.Adapters.ViewPagerAdapter;
 import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
 import com.shid.clip.Utils.AppExecutor;
+import com.shid.clip.Utils.MyBounceInterpolator;
 import com.shid.clip.Utils.SharedPref;
 import com.varunest.sparkbutton.SparkButton;
 import com.varunest.sparkbutton.SparkEventListener;
 
 import java.util.List;
 
-import static androidx.recyclerview.widget.DividerItemDecoration.HORIZONTAL;
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 
-public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemClickListener {
+public class MainActivity extends AppCompatActivity  {
+
+    private TabLayout tabLayout;
+    private AppBarLayout appBarLayout;
+    private ViewPager viewPager;
 
     // Constant for logging
     private static final String TAG = MainActivity.class.getSimpleName();
     // Member variables for the adapter and RecyclerView
-    private RecyclerView mRecyclerView;
-    private ClipAdapter mAdapter;
-    private SwitchCompat mSwitch;
+    //private RecyclerView mRecyclerView;
+    //private ClipAdapter mAdapter;
+   // private SwitchCompat mSwitch;
     private boolean isServiceOn = false;
     private SharedPref sharedPref;
     private SparkButton sparkButton;
 
 
-    private AppDatabase mDb;
+    //private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +65,15 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
         setContentView(R.layout.activity_main);
 
         Log.d(TAG, "value of boolean " + isServiceOn);
-        mSwitch = findViewById(R.id.switch1);
+        //mSwitch = findViewById(R.id.switch1);
         sparkButton = findViewById(R.id.spark_button);
+        setButtonAnimation();
+
+        tabLayout = findViewById(R.id.tablayout_id);
+        appBarLayout = findViewById(R.id.app_bar_id);
+        viewPager = findViewById(R.id.view_pager);
+
+        setupFragments();
 
 
 
@@ -88,19 +104,19 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
         checkPref();
 
         // Set the RecyclerView to its corresponding view
-        mRecyclerView = findViewById(R.id.recyclerView);
+        //mRecyclerView = findViewById(R.id.recyclerView);
 
         // Set the layout for the RecyclerView to be a linear layout, which measures and
         // positions items within a RecyclerView into a linear list
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new ClipAdapter(this, this);
-        mRecyclerView.setAdapter(mAdapter);
+        //mAdapter = new ClipAdapter(this, this);
+        //mRecyclerView.setAdapter(mAdapter);
 
 
-        DividerItemDecoration decoration = new DividerItemDecoration(getApplicationContext(), VERTICAL);
-        mRecyclerView.addItemDecoration(decoration);
+        //DividerItemDecoration decoration = new DividerItemDecoration(getApplicationContext(), VERTICAL);
+        //mRecyclerView.addItemDecoration(decoration);
 
 
          /*
@@ -108,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
+         /*
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -130,10 +147,34 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
             }
         }).attachToRecyclerView(mRecyclerView);
 
-        mDb = AppDatabase.getInstance(getApplicationContext());
-        setupViewModel();
-        handleAutoListen();
+          */
 
+        //mDb = AppDatabase.getInstance(getApplicationContext());
+       // setupViewModel();
+      //  handleAutoListen();
+
+    }
+
+    private void setButtonAnimation() {
+        final Animation animation = AnimationUtils.loadAnimation(this,R.anim.bounce);
+
+        // Use bounce interpolator with amplitude 0.2 and frequency 20
+        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.4, 22);
+        animation.setInterpolator(interpolator);
+
+        //   fab.startAnimation(animation);
+        sparkButton.startAnimation(animation);
+    }
+
+    private void setupFragments() {
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        //Adding Fragments
+        viewPagerAdapter.addFragment(new FragmentHome(),"Clips");
+        viewPagerAdapter.addFragment(new FragmentFavorite(),"Favorite(s)");
+
+        //Adapter setup
+        viewPager.setAdapter(viewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private void restartApp() {
@@ -142,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
 
     private void checkPref() {
      sharedPref = new SharedPref(this);
+     /*
      if (sharedPref.loadSwitchState()){
          mSwitch.setChecked(true);
          startAutoService();
@@ -149,6 +191,8 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
          mSwitch.setChecked(false);
          stopAutoService();
      }
+
+      */
 
      if (sharedPref.loadNightMode()){
          setTheme(R.style.DarkTheme);
@@ -170,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
         }
     }
 
-
+/*
     private void handleAutoListen() {
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -203,6 +247,9 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
         Toast.makeText(MainActivity.this, "ShidClip AutoListen enabled...", Toast.LENGTH_SHORT).show();
     }
 
+ */
+
+/*
     private void setupViewModel() {
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getClips().observe(this, new Observer<List<ClipEntry>>() {
@@ -230,4 +277,6 @@ public class MainActivity extends AppCompatActivity implements ClipAdapter.ItemC
         }
 
     }
+
+ */
 }

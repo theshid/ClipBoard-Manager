@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingBottom="8dp"
-    android:background="?attr/backgroundColor"
-    >
+    android:background="?attr/backgroundColor">
 
     <!-- TextView that displays the description -->
     <TextView
@@ -20,14 +20,34 @@
         android:textColor="?attr/textColor"
         tools:text="Description" />
 
-    <!-- TextView that displays the update date -->
-    <TextView
-        android:id="@+id/clipDate"
-        style="@style/TextAppearance.AppCompat.Small"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColor"
-        android:drawableTint="?attr/tintColor"
-        tools:text="11/11/1111" />
+        android:layout_marginTop="15dp">
+
+        <!-- TextView that displays the update date -->
+        <TextView
+            android:id="@+id/clipDate"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/textColor"
+            android:drawableTint="?attr/tintColor"
+            tools:text="11/11/1111" />
+
+        <com.varunest.sparkbutton.SparkButton
+            android:id="@+id/favorite_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="100dp"
+            android:layout_toEndOf="@+id/clipDate"
+            app:sparkbutton_activeImage="@drawable/star_active"
+            app:sparkbutton_animationSpeed="1.5"
+            app:sparkbutton_inActiveImage="@drawable/star_inactive"
+            app:sparkbutton_primaryColor="@color/colorAccent"
+            app:sparkbutton_secondaryColor="@color/colorPrimary" />
+    </RelativeLayout>
+
+
 
 </LinearLayout>

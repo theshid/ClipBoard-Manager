@@ -20,6 +20,12 @@ public interface ClipDAO {
     @Delete
     void deleteClip(ClipEntry clipEntry);
 
+    @Query("SELECT * FROM clip WHERE favorite = 1 ORDER BY date")
+    LiveData<List<ClipEntry>> loadFavoriteClips();
+
+    @Query("UPDATE clip SET favorite = :fav WHERE clipId = :id")
+    void update(int fav,int id);
+
 
 
 

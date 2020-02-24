@@ -9,7 +9,7 @@
     </style>
 
     <!-- Light/Day Mode -->
-    <style name="DayTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="DayTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#2196F3</item>
         <item name="colorPrimaryDark">#1976D2</item>
@@ -28,7 +28,7 @@
     </style>
 
     <!-- Dark/Night Mode -->
-    <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#212121</item>
         <item name="android:divider">#ffffff</item>

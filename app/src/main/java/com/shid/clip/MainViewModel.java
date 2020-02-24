@@ -17,15 +17,21 @@ public class MainViewModel extends AndroidViewModel {
     private static final String TAG = MainViewModel.class.getSimpleName();
 
     private LiveData<List<ClipEntry>> clips;
+    private LiveData<List<ClipEntry>> favorites;
 
     public MainViewModel(Application application) {
         super(application);
         AppDatabase database = AppDatabase.getInstance(this.getApplication());
         Log.d(TAG, "Actively retrieving the tasks from the DataBase");
         clips = database.clipDao().loadAllClips();
+        favorites = database.clipDao().loadFavoriteClips();
     }
 
     public LiveData<List<ClipEntry>> getClips() {
         return clips;
+    }
+
+    public LiveData<List<ClipEntry>> getFavorites(){
+        return favorites;
     }
 }

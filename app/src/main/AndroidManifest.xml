@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/DayTheme">
+
         <receiver
             android:name=".StopAutoListenReceiver"
             android:enabled="true"

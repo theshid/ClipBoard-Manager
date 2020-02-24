@@ -1,70 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_layout"
-    tools:context=".MainActivity"
-    style="@style/DayTheme"
-    android:background="?attr/backgroundColor">
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="?attr/textColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/switch_activate_service"
-        android:textSize="16sp"
-        android:textColor="?attr/textColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <com.varunest.sparkbutton.SparkButton
-        android:id="@+id/spark_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="42dp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:sparkbutton_activeImage="@drawable/day"
-        app:sparkbutton_animationSpeed="1.5"
-        app:sparkbutton_inActiveImage="@drawable/night"
-        app:sparkbutton_primaryColor="@color/colorAccent"
-        app:sparkbutton_secondaryColor="@color/colorPrimary" />
-
-    <ScrollView
-        android:id="@+id/scrollView2"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_id"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="150dp"
-        android:background="?attr/backgroundColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch1">
+        android:layout_height="200dp"
+        android:gravity="center"
+        app:elevation="0dp"
+        android:background="?attr/backgroundColor">
 
-        <include layout="@layout/container_main" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="208dp"
+                android:layout_height="164dp"
+                android:src="@drawable/zoro"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <com.varunest.sparkbutton.SparkButton
+                android:id="@+id/spark_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="52dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:layout_toLeftOf="@+id/image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.729"
+                app:layout_constraintStart_toEndOf="@+id/image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:sparkbutton_activeImage="@drawable/bulb_on"
+                app:sparkbutton_animationSpeed="1.5"
+                app:sparkbutton_inActiveImage="@drawable/bulb_off"
+                app:sparkbutton_primaryColor="@color/colorAccent"
+                app:sparkbutton_secondaryColor="@color/colorPrimary" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tablayout_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/tabIndicatorColor"
+        app:tabMode="fixed"
+        app:tabTextColor="@color/tabTextColor" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</LinearLayout>
