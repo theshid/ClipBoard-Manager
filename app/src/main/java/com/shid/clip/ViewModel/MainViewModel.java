@@ -1,4 +1,4 @@
-package com.shid.clip;
+package com.shid.clip.ViewModel;
 
 import android.app.Application;
 import android.util.Log;

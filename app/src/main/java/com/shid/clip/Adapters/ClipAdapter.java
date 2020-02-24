@@ -67,7 +67,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
         //Set values
         holder.clipView.setText(clip);
         holder.dateClip.setText(date);
-
+     //Set the button active or inactive depending if the clips was bookmarked or not
         if (favorite_status ==0){
             holder.favorite.setChecked(false);
             Log.d("Adapter","value of button "+holder.favorite.isChecked());
@@ -75,11 +75,12 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
             holder.favorite.setChecked(true);
             Log.d("Adapter","value of button "+holder.favorite.isChecked());
         }
+        //If the clip is bookmarked or unchecked,change the status in the database
         holder.favorite.setEventListener(new SparkEventListener() {
             @Override
             public void onEvent(ImageView button, boolean buttonState) {
                 if (buttonState){
-                    clipEntry.setFavorite(1);
+                    //clipEntry.setFavorite(1);
                     AppExecutor.getInstance().diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -89,7 +90,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
                     });
                     Log.d("Adapter","new value active"+clipEntry.getFavorite());
                 } else{
-                    clipEntry.setFavorite(0);
+                    //clipEntry.setFavorite(0);
                     AppExecutor.getInstance().diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -175,7 +176,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
             ClipboardManager clipboardManager = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("Copied text", entry);
             clipboardManager.setPrimaryClip(clipData);
-            Toast.makeText(view.getContext(), "Le texte a été copié", Toast.LENGTH_SHORT).show();
+            Toast.makeText(view.getContext(), "Text has been copied", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,4 +1,4 @@
-package com.shid.clip;
+package com.shid.clip.UI;
 
 import android.content.Intent;
 import android.os.Build;
@@ -21,8 +21,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shid.clip.Adapters.ClipAdapter;
+import com.shid.clip.Service.AutoListenService;
 import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
+import com.shid.clip.ViewModel.MainViewModel;
+import com.shid.clip.R;
 
 import java.util.List;
 
@@ -44,6 +47,14 @@ public class FragmentFavorite extends Fragment implements ClipAdapter.ItemClickL
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.favorite_fragment, container, false);
 
+        setUI();
+        mDb = AppDatabase.getInstance(getActivity());
+        setupViewModel();
+
+        return view;
+    }
+
+    private void setUI() {
         emptyView = view.findViewById(R.id.empty_view);
         // Set the RecyclerView to its corresponding view
         mRecyclerView = view.findViewById(R.id.recyclerView);
@@ -79,12 +90,6 @@ public class FragmentFavorite extends Fragment implements ClipAdapter.ItemClickL
         });
         DividerItemDecoration decoration = new DividerItemDecoration(getContext(), VERTICAL);
         mRecyclerView.addItemDecoration(decoration);
-
-        mDb = AppDatabase.getInstance(getActivity());
-        setupViewModel();
-
-
-        return view;
     }
 
     private void setupViewModel() {

@@ -1,4 +1,4 @@
-package com.shid.clip;
+package com.shid.clip.Service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -22,6 +22,9 @@ import androidx.core.app.NotificationCompat;
 
 import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
+import com.shid.clip.R;
+import com.shid.clip.Utils.StopAutoListenReceiver;
+import com.shid.clip.UI.MainActivity;
 import com.shid.clip.Utils.AppExecutor;
 import com.shid.clip.Utils.Constant;
 

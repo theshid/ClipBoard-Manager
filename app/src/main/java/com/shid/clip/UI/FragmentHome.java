@@ -1,4 +1,4 @@
-package com.shid.clip;
+package com.shid.clip.UI;
 
 import android.content.Intent;
 import android.os.Build;
@@ -24,8 +24,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shid.clip.Adapters.ClipAdapter;
+import com.shid.clip.Service.AutoListenService;
 import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
+import com.shid.clip.ViewModel.MainViewModel;
+import com.shid.clip.R;
 import com.shid.clip.Utils.AppExecutor;
 import com.shid.clip.Utils.SharedPref;
 
@@ -33,7 +36,7 @@ import java.util.List;
 
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 
-public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListener{
+public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListener {
     View view;
     private RecyclerView mRecyclerView;
     private ClipAdapter mAdapter;
@@ -43,15 +46,27 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     private boolean isServiceOn = false;
     private TextView emptyView;
 
-    public FragmentHome(){
+    public FragmentHome() {
 
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.home_fragment,container,false);
+        view = inflater.inflate(R.layout.home_fragment, container, false);
 
+        setUI();
+        mDb = AppDatabase.getInstance(getActivity());
+        setupViewModel();
+        checkPref();
+        handleAutoListen();
+
+        return view;
+
+
+    }
+
+    private void setUI() {
         emptyView = view.findViewById(R.id.empty_view);
 
         // Set the RecyclerView to its corresponding view
@@ -117,23 +132,14 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
                 Toast.makeText(getActivity(), "Entry deleted", Toast.LENGTH_LONG).show();
             }
         }).attachToRecyclerView(mRecyclerView);
-
-        mDb = AppDatabase.getInstance(getActivity());
-        setupViewModel();
-        checkPref();
-        handleAutoListen();
-
-        return view;
-
-
     }
 
     private void checkPref() {
         sharedPref = new SharedPref(getActivity());
-        if (sharedPref.loadSwitchState()){
+        if (sharedPref.loadSwitchState()) {
             mSwitch.setChecked(true);
             startAutoService();
-        } else{
+        } else {
             mSwitch.setChecked(false);
             stopAutoService();
         }
@@ -164,7 +170,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         // this.startService(new Intent(MainActivity.this,AutoListenService.class));
         Intent serviceIntent = new Intent(getActivity(), AutoListenService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-           getActivity().startForegroundService(serviceIntent);
+            getActivity().startForegroundService(serviceIntent);
         } else {
             getActivity().startService(serviceIntent);
         }
