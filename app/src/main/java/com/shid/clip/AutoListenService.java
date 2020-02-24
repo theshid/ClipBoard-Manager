@@ -126,7 +126,7 @@ public class AutoListenService extends Service {
             public void run() {
                 mClipboard.addPrimaryClipChangedListener(listener);
             }
-        }, 500);
+        }, 1000);
     }
 
 
