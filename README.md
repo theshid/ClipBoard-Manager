@@ -4,4 +4,4 @@ clipboard managing app that makes it easy to access your clipboard history an to
 
 Day mode / Dark Mode:
 
-![App demo](/desktop/giphy.gif)
+
