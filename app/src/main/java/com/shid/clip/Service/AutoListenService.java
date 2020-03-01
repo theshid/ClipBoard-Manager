@@ -104,23 +104,7 @@ public class AutoListenService extends Service {
 
             notificationManager.notify(Constant.NOTI_IDENTIFIER, mNotification);
             startForeground(Constant.NOTI_IDENTIFIER, mNotification);
-            /*else {//for old devices
-            vNotification1 = new NotificationCompat.Builder(context)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setLargeIcon(bitmap)
-                    .setContentTitle("AutoListen now activated")
-                    .setContentText("Press to stop Clipboard Manager")
-                    .setContentIntent(openActivityPIntent)
-                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                    .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .addAction(R.drawable.ic_stop_black, "STOP", stopAutoPIntent);
-
-            notificationManager.notify(Constant.NOTI_IDENTIFIER, vNotification1.build());
-
-
-        }
-        */
+            
         }
 
         mClipboard.addPrimaryClipChangedListener(listener);
