@@ -13,5 +13,7 @@ public class StopAutoListenReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         context.getApplicationContext().stopService(new Intent(context, AutoListenService.class));
+        SharedPref sharedPref = new SharedPref(context.getApplicationContext());
+        sharedPref.setSwitch(false);
     }
 }

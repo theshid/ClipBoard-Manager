@@ -48,7 +48,8 @@ public class AutoListenService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Intent openActivityIntent = new Intent(context, MainActivity.class);
-        openActivityIntent.putExtra("service on", true);
+        openActivityIntent.putExtra("service_on", true);
+        openActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         openActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent openActivityPIntent = PendingIntent.getActivity(context, Constant.AUTO_REQUEST_CODE, openActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -57,9 +58,9 @@ public class AutoListenService extends Service {
         // then keep it but its replace its extra data with what is in this new Intent.
 
         Intent stopAutoIntent = new Intent(context, StopAutoListenReceiver.class);
+        stopAutoIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         stopAutoIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent stopAutoPIntent = PendingIntent.getBroadcast(context, Constant.REQUEST_CODE, stopAutoIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent stopAutoPIntent = PendingIntent.getBroadcast(context, Constant.REQUEST_CODE, stopAutoIntent,0);
 
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_service);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -71,7 +72,7 @@ public class AutoListenService extends Service {
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(bitmap)
                     .setContentTitle("AutoListen now activated")
-                    .setContentText("Press to stop Clipboard Manager")
+                    .setContentText("Press to disable Clipboard Manager")
                     .setContentIntent(openActivityPIntent)
                     .setAutoCancel(true)
                     .addAction(builder.build())
@@ -81,7 +82,29 @@ public class AutoListenService extends Service {
 
             notificationManager.notify(Constant.NOTI_IDENTIFIER, vNotification);
             startForeground(Constant.NOTI_IDENTIFIER, vNotification);
-        } else {//for old devices
+        } else{
+            NotificationCompat.Action action =
+                    new NotificationCompat.Action.Builder(R.drawable.ic_stop_black,
+                            "STOP", stopAutoPIntent)
+                            .build();
+
+
+            NotificationCompat.Builder builder2 = new NotificationCompat.Builder(context, GENERAL_CHANNEL);
+            Notification mNotification = builder2
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(bitmap)
+                    .setContentTitle("AutoListen now activated")
+                    .setContentText("Press to disable Clipboard Manager")
+                    .setContentIntent(openActivityPIntent)
+                    .setAutoCancel(true)
+                    .addAction(action)
+                    .build();
+
+            mNotification.flags = Notification.FLAG_NO_CLEAR;
+
+            notificationManager.notify(Constant.NOTI_IDENTIFIER, mNotification);
+            startForeground(Constant.NOTI_IDENTIFIER, mNotification);
+            /*else {//for old devices
             vNotification1 = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(bitmap)
@@ -96,6 +119,8 @@ public class AutoListenService extends Service {
             notificationManager.notify(Constant.NOTI_IDENTIFIER, vNotification1.build());
 
 
+        }
+        */
         }
 
         mClipboard.addPrimaryClipChangedListener(listener);

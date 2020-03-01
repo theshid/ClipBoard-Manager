@@ -58,12 +58,27 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         setUI();
         mDb = AppDatabase.getInstance(getActivity());
         setupViewModel();
+        //checkIntent();
         checkPref();
         handleAutoListen();
+
 
         return view;
 
 
+    }
+
+    private void checkIntent() {
+        Intent intent = getActivity().getIntent();
+        if (intent.getBooleanExtra("service_on", true)) {
+            Log.d("Fragment","value of intent " + intent.getBooleanExtra("service_on",true));
+
+                sharedPref.setSwitch(false);
+                mSwitch.setChecked(false);
+                stopAutoService();
+
+
+        }
     }
 
     private void setUI() {
@@ -158,6 +173,12 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkIntent();
     }
 
     private void stopAutoService() {

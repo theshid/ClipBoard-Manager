@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.animation.Animation;
@@ -47,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
         buttonClickListener();
         checkPref();
 
+
+    }
+
+    private void checkIntent() {
+        Intent intent = getIntent();
+if (intent.getBooleanExtra("service on",true)){
+
+}
     }
 
     private void buttonClickListener() {
