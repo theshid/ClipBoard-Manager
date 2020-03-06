@@ -1,6 +1,9 @@
 # ClipBoard-Manager
 
-clipboard managing app that makes it easy to access your clipboard history and to reuse any elements before by a simple click. Additional features are available such as :
+> For Android 10 users, apps cannot access clipboard data unless it’s the default input method editor (IME). In other words, only the current default keyboard can read from the clipboard and other apps running in the background can’t. The app works fine with previous versions. 
+
+
+Clipboard managing app that makes it easy to access your clipboard history and to reuse any elements before by a simple click. Additional features are available such as :
 
 Day mode / Dark Mode:
 
