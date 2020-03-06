@@ -126,7 +126,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
         return mClipEntries.size();
     }
 
-    public List<ClipEntry> getTasks() {
+    public List<ClipEntry> getClipsEntries() {
         return mClipEntries;
     }
 

@@ -104,7 +104,7 @@ public class AutoListenService extends Service {
 
             notificationManager.notify(Constant.NOTI_IDENTIFIER, mNotification);
             startForeground(Constant.NOTI_IDENTIFIER, mNotification);
-            
+
         }
 
         mClipboard.addPrimaryClipChangedListener(listener);

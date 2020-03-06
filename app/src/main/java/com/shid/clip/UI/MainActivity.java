@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkIntent() {
         Intent intent = getIntent();
-if (intent.getBooleanExtra("service on",true)){
+        if (intent.getBooleanExtra("service on", true)) {
 
-}
+        }
     }
 
     private void buttonClickListener() {

@@ -140,7 +140,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
                     @Override
                     public void run() {
                         int position = viewHolder.getAdapterPosition();
-                        List<ClipEntry> clips = mAdapter.getTasks();
+                        List<ClipEntry> clips = mAdapter.getClipsEntries();
                         mDb.clipDao().deleteClip(clips.get(position));
                     }
                 });
