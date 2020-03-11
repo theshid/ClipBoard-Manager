@@ -1,13 +1,17 @@
 package com.shid.clip.Database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity(tableName = "clip")
-public class ClipEntry {
+public class ClipEntry implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int clipId;
@@ -61,4 +65,12 @@ public class ClipEntry {
     public void setDate(Date date) {
         this.date = date;
     }
+
+
+
+
+
+
+
+
 }

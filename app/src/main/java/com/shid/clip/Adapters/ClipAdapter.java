@@ -168,15 +168,9 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
 
         @Override
         public void onClick(View view) {
-            int elementId = mClipEntries.get(getAdapterPosition()).getClipId();
+            int elementId = getAdapterPosition();
             mItemClickListener.onItemClickListener(elementId);
-            TextView name = view.findViewById(R.id.clip_entry);
-            String entry = name.getText().toString();
 
-            ClipboardManager clipboardManager = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clipData = ClipData.newPlainText("Copied text", entry);
-            clipboardManager.setPrimaryClip(clipData);
-            Toast.makeText(view.getContext(), "Text has been copied", Toast.LENGTH_SHORT).show();
         }
     }
 

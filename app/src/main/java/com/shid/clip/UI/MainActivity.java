@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isServiceOn = false;
     private SharedPref sharedPref;
     private SparkButton sparkButton;
+
 
 
     @Override
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         appBarLayout = findViewById(R.id.app_bar_id);
         viewPager = findViewById(R.id.view_pager);
         sparkButton = findViewById(R.id.spark_button);
+
     }
 
     private void setButtonAnimation() {

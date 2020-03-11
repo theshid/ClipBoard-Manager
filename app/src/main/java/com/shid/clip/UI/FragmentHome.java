@@ -1,19 +1,27 @@
 package com.shid.clip.UI;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -23,6 +31,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.shid.clip.Adapters.ClipAdapter;
 import com.shid.clip.Service.AutoListenService;
 import com.shid.clip.Database.AppDatabase;
@@ -32,6 +42,7 @@ import com.shid.clip.R;
 import com.shid.clip.Utils.AppExecutor;
 import com.shid.clip.Utils.SharedPref;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
@@ -45,6 +56,8 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     private SharedPref sharedPref;
     private boolean isServiceOn = false;
     private TextView emptyView;
+    private List<ClipEntry> clips;
+    private LinearLayout rootLayout;
 
     public FragmentHome() {
 
@@ -71,11 +84,11 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     private void checkIntent() {
         Intent intent = getActivity().getIntent();
         if (intent.getBooleanExtra("service_on", true)) {
-            Log.d("Fragment","value of intent " + intent.getBooleanExtra("service_on",true));
+            Log.d("Fragment", "value of intent " + intent.getBooleanExtra("service_on", true));
 
-                sharedPref.setSwitch(false);
-                mSwitch.setChecked(false);
-                stopAutoService();
+            sharedPref.setSwitch(false);
+            mSwitch.setChecked(false);
+            stopAutoService();
 
 
         }
@@ -87,6 +100,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         // Set the RecyclerView to its corresponding view
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mSwitch = view.findViewById(R.id.switch1);
+        rootLayout = view.findViewById(R.id.rootLayout);
         // Set the layout for the RecyclerView to be a linear layout, which measures and
         // positions items within a RecyclerView into a linear list
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -94,6 +108,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         // Initialize the adapter and attach it to the RecyclerView
         mAdapter = new ClipAdapter(getContext(), this);
         mRecyclerView.setAdapter(mAdapter);
+        clips = mAdapter.getClipsEntries();
 
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -140,7 +155,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
                     @Override
                     public void run() {
                         int position = viewHolder.getAdapterPosition();
-                        List<ClipEntry> clips = mAdapter.getClipsEntries();
+                        clips = mAdapter.getClipsEntries();
                         mDb.clipDao().deleteClip(clips.get(position));
                     }
                 });
@@ -211,16 +226,71 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
 
     @Override
     public void onItemClickListener(int itemId) {
-        if (isServiceOn) {
-            stopAutoService();
+        showOptionDialog(itemId);
+    }
 
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startAutoService();
+    private void showOptionDialog(final int clipId) {
+
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        dialog.setTitle("Menu");
+        dialog.setMessage("Choose your option");
+        Log.d("TAG", "value of position: " +clipId);
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View option_layout = inflater.inflate(R.layout.dialog_layout, null);
+
+        dialog.setView(option_layout);
+
+
+        dialog.setPositiveButton("Copy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                List<ClipEntry> clips = mAdapter.getClipsEntries();
+                ClipEntry clipEntry = clips.get(clipId);
+                String clipName = clipEntry.getEntry();
+
+                ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("Copied text", clipName);
+                clipboardManager.setPrimaryClip(clipData);
+                Snackbar.make(rootLayout, "Text has been copied", Snackbar.LENGTH_SHORT)
+                        .show();
+                if (isServiceOn) {
+                    stopAutoService();
+
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startAutoService();
+                        }
+                    }, 500);
                 }
-            }, 500);
-        }
+            }
+        });
+
+        dialog.setNegativeButton("Edit Clip", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                showEditDialog(clipId);
+            }
+        });
+
+
+
+
+        dialog.show();
+
+    }
+
+    private void showEditDialog(final int clipId){
+        List<ClipEntry>clips = mAdapter.getClipsEntries();
+        Intent intent = new Intent(getContext(),EditActivity.class);
+
+        intent.putExtra("position",clipId);
+
+        intent.putExtra("list",(Serializable)clips);
+        startActivity(intent);
     }
 }

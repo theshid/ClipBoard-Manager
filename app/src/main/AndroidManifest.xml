@@ -11,21 +11,22 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/DayTheme">
+        <activity android:name=".UI.EditActivity"></activity>
 
         <receiver
             android:name=".Utils.StopAutoListenReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <service
             android:name=".Service.AutoListenService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".UI.MainActivity"
-            android:theme="@style/DayTheme"
-            android:launchMode="singleTop">
-
+        <activity
+            android:name=".UI.MainActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/DayTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

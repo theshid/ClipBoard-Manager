@@ -5,4 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="tabIndicatorColor">#F72617</color>
     <color name="tabTextColor">#fff</color>
+
+    <color name="ripple_effect_color">#f816a463</color>
+    <color name="btnCopy">#1fbad6</color>
 </resources>

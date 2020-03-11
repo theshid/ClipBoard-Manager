@@ -26,6 +26,9 @@ public interface ClipDAO {
     @Query("UPDATE clip SET favorite = :fav WHERE clipId = :id")
     void update(int fav,int id);
 
+    @Query("UPDATE clip SET entry = :ent WHERE clipId = :id")
+    void updateClip(String ent, int id);
+
 
 
 
