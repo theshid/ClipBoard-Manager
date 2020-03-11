@@ -1,5 +1,6 @@
 package com.shid.clip.UI;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -28,10 +29,10 @@ public class EditActivity extends AppCompatActivity {
     private Button btn_cancel;
     private EditText editText;
     private List<ClipEntry> clipEntries;
-    private MainViewModel viewModel;
     private int position;
     private AppDatabase mDb;
     private SharedPref sharedPref;
+    ClipEntry clipEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +40,39 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_layout);
 
+        setUI();
+        checkIntent();
+        btnClickEvent();
+
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("clip",editText.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        editText.setText("");
+        editText.append(savedInstanceState.getString("clip"));
+    }
+
+    private void setUI() {
         btn_cancel = findViewById(R.id.btn_cancel);
         btn_edit = findViewById(R.id.btn_edit);
         editText = findViewById(R.id.editText_edit);
         mDb = AppDatabase.getInstance(this);
-        clipEntries = (List<ClipEntry>)getIntent().getSerializableExtra("list");
-        setupViewModel();
-        checkIntent();
-
-        final ClipEntry clipEntry = clipEntries.get(position);
-        //editText.setText(clipEntry.getEntry());
+        clipEntries = (List<ClipEntry>) getIntent().getSerializableExtra("list");
+        clipEntry = clipEntries.get(position);
         editText.append(clipEntry.getEntry());
 
+    }
 
-
+    private void btnClickEvent() {
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,10 +81,10 @@ public class EditActivity extends AppCompatActivity {
                     public void run() {
                         String text = editText.getText().toString();
                         int id = clipEntry.getClipId();
-                        mDb.clipDao().updateClip(text,id);
+                        mDb.clipDao().updateClip(text, id);
                     }
                 });
-                Toast.makeText(EditActivity.this,"Clip updated",Toast.LENGTH_LONG).show();
+                Toast.makeText(EditActivity.this, "Clip updated", Toast.LENGTH_LONG).show();
                 backToMainIntent();
 
             }
@@ -83,16 +103,6 @@ public class EditActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void setupViewModel() {
-        viewModel = ViewModelProviders.of(EditActivity.this).get(MainViewModel.class);
-        viewModel.getClips().observe(this, new Observer<List<ClipEntry>>() {
-            @Override
-            public void onChanged(@Nullable List<ClipEntry> taskEntries) {
-                Log.d("Fragment", "Updating list of tasks from LiveData in ViewModel");
-                clipEntries = taskEntries;
-            }
-        });
-    }
 
     private void checkPref() {
         sharedPref = new SharedPref(this);
@@ -106,7 +116,7 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    private void checkIntent(){
-        position = getIntent().getIntExtra("position",0);
+    private void checkIntent() {
+        position = getIntent().getIntExtra("position", 0);
     }
 }
