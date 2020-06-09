@@ -22,9 +22,21 @@
 
 
             <ImageView
-                android:id="@+id/image"
+                android:id="@+id/image_zoro"
                 android:layout_width="208dp"
                 android:layout_height="164dp"
+                android:src="@drawable/zoro_day"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                />
+
+            <ImageView
+                android:id="@+id/image2"
+                android:layout_width="208dp"
+                android:layout_height="164dp"
+                android:visibility="gone"
                 android:src="@drawable/zoro"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +60,7 @@
                 app:sparkbutton_inActiveImage="@drawable/bulb_off"
                 app:sparkbutton_primaryColor="@color/colorAccent"
                 app:sparkbutton_secondaryColor="@color/colorPrimary" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -15,7 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -93,7 +94,7 @@ public class FragmentFavorite extends Fragment implements ClipAdapter.ItemClickL
     }
 
     private void setupViewModel() {
-        MainViewModel viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        MainViewModel viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
         viewModel.getFavorites().observe(getActivity(), new Observer<List<ClipEntry>>() {
             @Override
             public void onChanged(@Nullable List<ClipEntry> taskEntries) {

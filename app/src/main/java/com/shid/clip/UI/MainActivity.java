@@ -7,6 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isServiceOn = false;
     private SharedPref sharedPref;
     private SparkButton sparkButton;
+    private ImageView zoroDay;
+    private ImageView zoroNight;
 
 
 
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         appBarLayout = findViewById(R.id.app_bar_id);
         viewPager = findViewById(R.id.view_pager);
         sparkButton = findViewById(R.id.spark_button);
+        zoroDay = findViewById(R.id.image_zoro);
+        zoroNight = findViewById(R.id.image2);
 
     }
 
@@ -124,9 +129,13 @@ public class MainActivity extends AppCompatActivity {
 
         if (sharedPref.loadNightMode()) {
             setTheme(R.style.DarkTheme);
+            zoroNight.setVisibility(View.VISIBLE);
+            zoroDay.setVisibility(View.GONE);
             sparkButton.setChecked(true);
         } else {
             setTheme(R.style.DayTheme);
+            zoroDay.setVisibility(View.VISIBLE);
+            zoroNight.setVisibility(View.GONE);
             sparkButton.setChecked(false);
         }
     }
@@ -135,10 +144,12 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = new SharedPref(this);
         if (sharedPref.loadNightMode()) {
             setTheme(R.style.DarkTheme);
-
+           // zoroNight.setVisibility(View.VISIBLE);
+            //zoroDay.setVisibility(View.GONE);
         } else {
             setTheme(R.style.DayTheme);
-
+           // zoroDay.setVisibility(View.VISIBLE);
+            //zoroNight.setVisibility(View.GONE);
         }
     }
 

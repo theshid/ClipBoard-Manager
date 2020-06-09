@@ -25,7 +25,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -214,7 +215,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     }
 
     private void setupViewModel() {
-        MainViewModel viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        MainViewModel viewModel =new ViewModelProvider(getActivity()).get(MainViewModel.class);
         viewModel.getClips().observe(getActivity(), new Observer<List<ClipEntry>>() {
             @Override
             public void onChanged(@Nullable List<ClipEntry> taskEntries) {
