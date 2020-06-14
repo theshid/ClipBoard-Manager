@@ -17,25 +17,32 @@
         android:textSize="16sp"
          />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="?attr/backgroundColor"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp"
-        />
+    
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="?attr/backgroundColor"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"
+            />
 
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone"
-        android:textSize="24sp"
-        android:textStyle="italic"
-        android:textColor="?attr/textColor"
-        android:text="@string/data_texview" />
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            android:textSize="24sp"
+            android:textStyle="italic"
+            android:textColor="?attr/textColor"
+            android:text="@string/data_texview" />
+
+
+
+
+
+
 
 </LinearLayout>

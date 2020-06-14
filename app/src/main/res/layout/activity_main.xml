@@ -23,8 +23,8 @@
 
             <ImageView
                 android:id="@+id/image_zoro"
-                android:layout_width="208dp"
-                android:layout_height="164dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/zoro_day"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -34,8 +34,8 @@
 
             <ImageView
                 android:id="@+id/image2"
-                android:layout_width="208dp"
-                android:layout_height="164dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:src="@drawable/zoro"
                 app:layout_constraintBottom_toBottomOf="parent"

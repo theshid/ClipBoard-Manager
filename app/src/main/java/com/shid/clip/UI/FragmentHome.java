@@ -8,12 +8,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
+
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
@@ -33,7 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
 import com.shid.clip.Adapters.ClipAdapter;
 import com.shid.clip.Service.AutoListenService;
 import com.shid.clip.Database.AppDatabase;
@@ -60,6 +58,10 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     private List<ClipEntry> clips;
     private LinearLayout rootLayout;
 
+
+
+
+
     public FragmentHome() {
 
     }
@@ -70,6 +72,8 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         view = inflater.inflate(R.layout.home_fragment, container, false);
 
         setUI();
+
+
         mDb = AppDatabase.getInstance(getActivity());
         setupViewModel();
         //checkIntent();
@@ -81,6 +85,8 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
 
 
     }
+
+
 
     private void checkIntent() {
         Intent intent = getActivity().getIntent();
@@ -105,6 +111,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         // Set the layout for the RecyclerView to be a linear layout, which measures and
         // positions items within a RecyclerView into a linear list
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
 
         // Initialize the adapter and attach it to the RecyclerView
         mAdapter = new ClipAdapter(getContext(), this);
@@ -215,7 +222,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     }
 
     private void setupViewModel() {
-        MainViewModel viewModel =new ViewModelProvider(getActivity()).get(MainViewModel.class);
+        MainViewModel viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
         viewModel.getClips().observe(getActivity(), new Observer<List<ClipEntry>>() {
             @Override
             public void onChanged(@Nullable List<ClipEntry> taskEntries) {
@@ -235,7 +242,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle("Menu");
         dialog.setMessage("Choose your option");
-        Log.d("TAG", "value of position: " +clipId);
+        Log.d("TAG", "value of position: " + clipId);
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View option_layout = inflater.inflate(R.layout.dialog_layout, null);
@@ -279,19 +286,17 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         });
 
 
-
-
         dialog.show();
 
     }
 
-    private void showEditDialog(final int clipId){
-        List<ClipEntry>clips = mAdapter.getClipsEntries();
-        Intent intent = new Intent(getContext(),EditActivity.class);
+    private void showEditDialog(final int clipId) {
+        List<ClipEntry> clips = mAdapter.getClipsEntries();
+        Intent intent = new Intent(getContext(), EditActivity.class);
 
-        intent.putExtra("position",clipId);
+        intent.putExtra("position", clipId);
 
-        intent.putExtra("list",(Serializable)clips);
+        intent.putExtra("list", (Serializable) clips);
         startActivity(intent);
     }
 }

@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView zoroDay;
     private ImageView zoroNight;
 
+    private static final String CHANNEL_ID = "1001";
+
 
 
     @Override

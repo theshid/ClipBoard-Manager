@@ -4,6 +4,7 @@
     package="com.shid.clip">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -13,7 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/DayTheme"
         tools:ignore="LockedOrientationActivity">
-        <activity android:name=".UI.EditActivity"></activity>
+
+        <activity android:name=".UI.BubbleActivity"
+            android:theme="@style/DayTheme">
+
+        </activity>
+        <activity android:name=".UI.EditActivity" />
 
         <receiver
             android:name=".Utils.StopAutoListenReceiver"
@@ -28,8 +34,8 @@
         <activity
             android:name=".UI.MainActivity"
             android:launchMode="singleTop"
-            android:theme="@style/DayTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/DayTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

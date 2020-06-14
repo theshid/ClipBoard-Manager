@@ -4,4 +4,7 @@
     <string name="switch_activate_service">Activate Service</string>
     <string name="general_channel">General Channel</string>
     <string name="data_texview">NO DATA AVAILABLE</string>
+
+    <string name="channel_name">To do Channel</string>
+    <string name="channel_description">This is a channel for to-do list.</string>
 </resources>
