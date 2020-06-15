@@ -11,7 +11,7 @@ import java.util.List;
 @Dao
 public interface ClipDAO {
 
-    @Query("SELECT * FROM clip ORDER BY date")
+    @Query("SELECT * FROM clip ORDER BY date DESC")
     LiveData<List<ClipEntry>> loadAllClips();
 
     @Insert

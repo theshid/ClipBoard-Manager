@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +37,7 @@ import com.shid.clip.Adapters.ClipAdapter;
 import com.shid.clip.Service.AutoListenService;
 import com.shid.clip.Database.AppDatabase;
 import com.shid.clip.Database.ClipEntry;
+import com.shid.clip.Utils.RecyclerItemTouchHelper;
 import com.shid.clip.ViewModel.MainViewModel;
 import com.shid.clip.R;
 import com.shid.clip.Utils.AppExecutor;
@@ -46,7 +48,8 @@ import java.util.List;
 
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 
-public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListener {
+public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListener,
+        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     View view;
     private RecyclerView mRecyclerView;
     private ClipAdapter mAdapter;
@@ -57,9 +60,8 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     private TextView emptyView;
     private List<ClipEntry> clips;
     private LinearLayout rootLayout;
-
-
-
+    private MainViewModel viewModel;
+    List<ClipEntry> listBis;
 
 
     public FragmentHome() {
@@ -85,7 +87,6 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
 
 
     }
-
 
 
     private void checkIntent() {
@@ -144,12 +145,15 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         DividerItemDecoration decoration = new DividerItemDecoration(getContext(), VERTICAL);
         mRecyclerView.addItemDecoration(decoration);
 
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.RIGHT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
+
           /*
          Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        /*new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -169,7 +173,65 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
                 });
                 Toast.makeText(getActivity(), "Entry deleted", Toast.LENGTH_LONG).show();
             }
-        }).attachToRecyclerView(mRecyclerView);
+        }).attachToRecyclerView(mRecyclerView);*/
+    }
+
+    @Override
+    public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof ClipAdapter.ClipViewHolder) {
+            // get the removed item name to display it in snack bar
+            //  String name = clips.get(viewHolder.getAdapterPosition()).getEntry();
+//Log.d("TAG","value of adapter "+ clips.get(viewHolder.getAdapterPosition()).getEntry());
+            clips = mAdapter.getClipsEntries();
+            Log.d("TAG","size of list" + clips.size());
+
+
+
+                    // backup of removed item for undo purpose
+            final int positionOfClip = viewHolder.getAdapterPosition();
+            Log.d("TAG","size of position" + positionOfClip);
+            final ClipEntry deletedItem = clips.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+
+            // remove the item from recycler view
+            mAdapter.removeItem(viewHolder.getAdapterPosition());
+            Log.d("TAG","size of list after remove" + clips.size());
+            Log.d("TAG","size of listbis after remove" + listBis.size());
+
+            // showing snack bar with Undo option
+            Snackbar snackbar = Snackbar
+                    .make(rootLayout, " Clip removed!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    // undo is selected, restore the deleted item
+                    mAdapter.restoreItem(deletedItem, deletedIndex);
+                }
+
+
+            }).addCallback(new Snackbar.Callback() {
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    if (event != DISMISS_EVENT_ACTION) {
+                        AppExecutor.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.restoreItem2(deletedItem,deletedIndex);
+                                clips = mAdapter.getClipsEntries();
+                                mDb.clipDao().deleteClip(listBis.get(positionOfClip));
+                            }
+                        });
+                        Toast.makeText(getActivity(), "Entry deleted", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 
     private void checkPref() {
@@ -222,12 +284,13 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     }
 
     private void setupViewModel() {
-        MainViewModel viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
         viewModel.getClips().observe(getActivity(), new Observer<List<ClipEntry>>() {
             @Override
             public void onChanged(@Nullable List<ClipEntry> taskEntries) {
                 Log.d("Fragment", "Updating list of tasks from LiveData in ViewModel");
                 mAdapter.setClips(taskEntries);
+                listBis = taskEntries;
             }
         });
     }
@@ -299,4 +362,6 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         intent.putExtra("list", (Serializable) clips);
         startActivity(intent);
     }
+
+
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
 
     @Override
     public void onBindViewHolder(ClipViewHolder holder, int position) {
+
         mDb = AppDatabase.getInstance(mContext);
         // Determine the values of the wanted data
         final ClipEntry clipEntry = mClipEntries.get(position);
@@ -143,13 +145,34 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
         void onItemClickListener(int itemId);
     }
 
+    public void removeItem(int position) {
+        mClipEntries.remove(position);
+        // notify the item removed by position
+        // to perform recycler view delete animations
+        // NOTE: don't call notifyDataSetChanged()
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(ClipEntry item, int position) {
+        mClipEntries.add(position, item);
+        // notify item added by position
+        notifyItemInserted(position);
+    }
+
+    public void restoreItem2(ClipEntry item, int position) {
+        mClipEntries.add(position, item);
+        // notify item added by position
+       // notifyItemInserted(position);
+    }
+
     // Inner class for creating ViewHolders
-    class ClipViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ClipViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Class variables for the task description and priority TextViews
         TextView clipView;
         TextView dateClip;
         SparkButton favorite;
+        public RelativeLayout viewBackground, viewForeground;
 
 
         /**
@@ -163,6 +186,8 @@ public class ClipAdapter extends RecyclerView.Adapter<ClipAdapter.ClipViewHolder
             clipView = itemView.findViewById(R.id.clip_entry);
             dateClip = itemView.findViewById(R.id.clipDate);
             favorite = itemView.findViewById(R.id.favorite_button);
+            viewBackground = itemView.findViewById(R.id.view_background);
+            viewForeground = itemView.findViewById(R.id.view_foreground);
             itemView.setOnClickListener(this);
         }
 

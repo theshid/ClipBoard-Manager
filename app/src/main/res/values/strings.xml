@@ -7,4 +7,5 @@
 
     <string name="channel_name">To do Channel</string>
     <string name="channel_description">This is a channel for to-do list.</string>
+    <string name="delete">delete</string>
 </resources>

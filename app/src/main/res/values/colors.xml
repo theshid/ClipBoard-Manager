@@ -8,4 +8,8 @@
 
     <color name="ripple_effect_color">#f816a463</color>
     <color name="btnCopy">#1fbad6</color>
+
+    <color name="bg_row_background">#fa315b</color>
+    <color name="item_name">#535353</color>
+    <color name="description">#a9a9a9</color>
 </resources>
