@@ -81,6 +81,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
         //checkIntent();
         checkPref();
         handleAutoListen();
+        detectIntent();
 
 
         return view;
@@ -101,6 +102,8 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
 
         }
     }
+
+
 
     private void setUI() {
         emptyView = view.findViewById(R.id.empty_view);
@@ -174,6 +177,28 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
                 Toast.makeText(getActivity(), "Entry deleted", Toast.LENGTH_LONG).show();
             }
         }).attachToRecyclerView(mRecyclerView);*/
+    }
+
+    public void detectIntent() {
+        // Get intent, action and MIME type
+        //Return the intent that started this activity, that is the case when we are sharing a tweet
+        //from twitter
+        Intent intent = getActivity().getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+
+            if ("text/plain".equals(type)) {
+                handleSharedText(intent);
+            }
+        }
+    }
+
+    private void handleSharedText(Intent intent) {
+        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+        viewModel.addTextInDb(sharedText);
+        Toast.makeText(getContext(),"Text added!",Toast.LENGTH_LONG).show();
     }
 
     @Override
