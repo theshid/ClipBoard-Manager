@@ -5,18 +5,19 @@
 
 Clipboard managing app that makes it easy to access your clipboard history and to reuse any elements before by a simple click. Additional features are available such as :
 
-| Day mode / Dark Mode      |  Swipe to delete |  Bookmark |
-| ----------- | ----------- |----------- |
-|![](images/giphy.gif)|![](images/giphy1.gif)|![](images/fav.jpeg)|
+| Day mode / Dark Mode      |  Swipe to delete |  
+| ----------- | ----------- |
+|![](images/new.gif)|![](images/new1.gif)|
 
 ## About
 
 - User can save data from clipboard
 - Day / Dark Mode
 - User can bookmark favorite clips
-- User can delete clips
+- User can delete clips and undo the delete
 - Date information is provided
 - Clips are reusable with a single click
+- Can import text from other apps
 
 ## Built With 🛠
 
