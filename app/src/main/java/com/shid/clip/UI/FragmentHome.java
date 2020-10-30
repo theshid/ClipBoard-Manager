@@ -6,14 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +38,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.google.android.material.snackbar.Snackbar;
 import com.shid.clip.Adapters.ClipAdapter;
 import com.shid.clip.Service.AutoListenService;
@@ -43,9 +50,17 @@ import com.shid.clip.R;
 import com.shid.clip.Utils.AppExecutor;
 import com.shid.clip.Utils.SharedPref;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.List;
 
+import static android.content.Context.WIFI_SERVICE;
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 
 public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListener,
@@ -97,12 +112,12 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
 
             sharedPref.setSwitch(false);
             mSwitch.setChecked(false);
+
             stopAutoService();
 
 
         }
     }
-
 
 
     private void setUI() {
@@ -198,7 +213,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     private void handleSharedText(Intent intent) {
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         viewModel.addTextInDb(sharedText);
-        Toast.makeText(getContext(),"Text added!",Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Text added!", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -208,21 +223,20 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
             //  String name = clips.get(viewHolder.getAdapterPosition()).getEntry();
 //Log.d("TAG","value of adapter "+ clips.get(viewHolder.getAdapterPosition()).getEntry());
             clips = mAdapter.getClipsEntries();
-            Log.d("TAG","size of list" + clips.size());
+            Log.d("TAG", "size of list" + clips.size());
 
 
-
-                    // backup of removed item for undo purpose
+            // backup of removed item for undo purpose
             final int positionOfClip = viewHolder.getAdapterPosition();
-            Log.d("TAG","size of position" + positionOfClip);
+            Log.d("TAG", "size of position" + positionOfClip);
             final ClipEntry deletedItem = clips.get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
 
 
             // remove the item from recycler view
             mAdapter.removeItem(viewHolder.getAdapterPosition());
-            Log.d("TAG","size of list after remove" + clips.size());
-            Log.d("TAG","size of listbis after remove" + listBis.size());
+            Log.d("TAG", "size of list after remove" + clips.size());
+            Log.d("TAG", "size of listbis after remove" + listBis.size());
 
             // showing snack bar with Undo option
             Snackbar snackbar = Snackbar
@@ -244,7 +258,7 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
                         AppExecutor.getInstance().diskIO().execute(new Runnable() {
                             @Override
                             public void run() {
-                                mAdapter.restoreItem2(deletedItem,deletedIndex);
+                                mAdapter.restoreItem2(deletedItem, deletedIndex);
                                 clips = mAdapter.getClipsEntries();
                                 mDb.clipDao().deleteClip(listBis.get(positionOfClip));
                             }
@@ -262,15 +276,18 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
     private void checkPref() {
         sharedPref = new SharedPref(getActivity());
         if (sharedPref.loadSwitchState()) {
-            mSwitch.setChecked(true);
+            //mSwitch.setChecked(true);
+            mSwitch.toggle();
             startAutoService();
         } else {
-            mSwitch.setChecked(false);
+            //mSwitch.setChecked(false);
+
             stopAutoService();
         }
     }
 
     private void handleAutoListen() {
+
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -365,6 +382,17 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
             }
         });
 
+        dialog.setNeutralButton("Send Clip to PC", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                List<ClipEntry> clips = mAdapter.getClipsEntries();
+                ClipEntry clipEntry = clips.get(clipId);
+                String clipName = clipEntry.getEntry();
+                showSendDataDialog(clipName);
+            }
+        });
+
         dialog.setNegativeButton("Edit Clip", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -376,6 +404,79 @@ public class FragmentHome extends Fragment implements ClipAdapter.ItemClickListe
 
         dialog.show();
 
+    }
+
+    private void showSendDataDialog(final String clip) {
+        ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        String ipAddress = null;
+        try {
+            ipAddress = getLocalIpAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        Log.d("TAG","ip address: "+ipAddress);
+        final EditText inputText = new EditText(getContext());
+        inputText.setText(ipAddress);
+        Toast.makeText(getContext(),"Check if IP address match PC IP address",Toast.LENGTH_LONG).show();
+        AlertDialog dialog = new AlertDialog.Builder(getContext(),R.style.AlertDialog)
+                .setTitle("Send Clip to Laptop")
+                .setMessage("Enter Ip number of PC")
+                .setView(inputText)
+                .setPositiveButton("Send Clip", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                        if (mWifi.isConnected() && mWifi != null) {
+                            // Do whatever
+                                String editTextInput = inputText.getText().toString();
+                                Log.d("onclick", "editext value is: " + editTextInput);
+                                sendData(editTextInput,clip);
+
+                        } else{
+                            Toast.makeText(getContext(),"You are not connected to wifi",Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        dialog.show();
+    }
+
+    private void sendData(final String serverIp, final String clip_text) {
+        AppExecutor appExecutor = AppExecutor.getInstance();
+
+
+        appExecutor.diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PrintWriter writer ;
+                    Socket socket;
+                    //String SERVER_IP = getLocalIpAddress();
+                    socket = new Socket(serverIp, 6000);
+                    writer = new PrintWriter(socket.getOutputStream());
+                    writer.write(clip_text);
+                    writer.flush();
+                    writer.close();
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    private String getLocalIpAddress() throws UnknownHostException {
+        WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
+        assert wifiManager != null;
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        int ipInt = wifiInfo.getIpAddress();
+        return InetAddress.getByAddress(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(ipInt).array()).getHostAddress();
     }
 
     private void showEditDialog(final int clipId) {
